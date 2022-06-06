@@ -12,7 +12,7 @@ def main():
             string = line[4:]
             if string[-1] == '\n':
                 string = string[:-1]
-            var_finder = r"var\([a-zA-z]+\)"
+            var_finder = r"var\([a-zA-Z]+\)"
             var = re.search(var_finder, string)
             while var:
                 str_var = string[var.start():var.end()]
