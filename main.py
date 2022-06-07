@@ -1,15 +1,16 @@
 import sys
 import re
 
-variables = {}
-
 def main():
     if len(sys.argv) < 2:
         return -1
     f = open(sys.argv[1], 'r')
     lines = f.readlines()
+    in_python = False
+    variables = {}
     for line in lines:
-        line = vars_to_value(line)
+        if not in_python:
+            line = vars_to_value(line, variables)
         if re.match("SAY ", line.upper()):
             string = line[4:]
             if string[-1] == '\n':
@@ -29,8 +30,15 @@ def main():
                 pass
             else:
                 value = eval(value)
-            variables[name] = value
-def vars_to_value(string):
+                variables[name] = value
+        elif re.match("PYTHON", line.upper()):
+            if in_python:
+                exec(py_code[py_code.index('\n'):])
+            py_code = ""
+            in_python = not in_python
+        if in_python:
+            py_code = py_code + line
+def vars_to_value(string, variables):
     try:
         var_finder = r"var\([a-zA-Z]+\)"
         var = re.search(var_finder, string)
